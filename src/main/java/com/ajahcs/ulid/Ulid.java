@@ -12,7 +12,11 @@ public class Ulid {
     private static SecureRandom randomNumberGenerator = new SecureRandom();
     private static long lastTimeStamp;
     private static String lastRandom;
-
+    private static final long maxTime;
+    static {
+        Double maxTimestampValue = (Double) (Math.pow(2, 48) - 1);
+        maxTime = maxTimestampValue.longValue();
+    }
     public Ulid(byte[] seed){
         randomNumberGenerator = new SecureRandom(seed);
     }
@@ -31,7 +35,13 @@ public class Ulid {
         return result.toString();
     }
 
-    public static String get(long time) {
+    public static String get(long time) throws RuntimeException {
+        if(time < 0){
+            throw new RuntimeException("Timestamp value cannot be negative");
+        }
+        if (time > maxTime){
+            throw new RuntimeException("Timestamp is too long. Ulid value will overflow.");
+        }
         if (time == lastTimeStamp) {
             lastRandom = Base32.increment(lastRandom, 1);
         } else {
