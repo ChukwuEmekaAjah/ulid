@@ -36,5 +36,23 @@ public class UlidTest
             assertTrue(Ulid.get(System.currentTimeMillis()).length() == 26);
         }
     }
+
+    @Test
+    public void shouldReturnMonotonicallyIncreasingString(){
+        long timestamp = 1724181910663L;
+        String uniqueId1 = Ulid.get(timestamp);
+        String uniqueId2 = Ulid.get(timestamp);
+        String uniqueId3 = Ulid.get(timestamp);
+
+        assertTrue(uniqueId1.substring(0,10).equals(uniqueId2.substring(0,10)));
+        assertTrue(uniqueId2.substring(0,10).equals(uniqueId3.substring(0,10)));
+
+        // incremented random string tied to the first occurrence of the current timestamp
+        assertTrue(uniqueId2.charAt(uniqueId2.length()-1) > uniqueId1.charAt(uniqueId1.length() - 1));
+        assertTrue(uniqueId3.charAt(uniqueId3.length()-1) > uniqueId2.charAt(uniqueId2.length() - 1));
+       
+    }
+    
+    
     
 }
